@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Integrals
 {
-    class IntegralRectangle : Integral
+    public class IntegralRectangle : Integral
     {
         public IntegralRectangle(double startValue, double endValue, int steps, Func<double, double> integrand)
         {

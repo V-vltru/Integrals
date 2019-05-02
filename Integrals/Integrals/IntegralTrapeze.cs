@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Integrals
 {
-    class IntegralTrapeze : Integral
+    public class IntegralTrapeze : Integral
     {
         public IntegralTrapeze(double startValue, double endValue, int steps, Func<double, double> integrand)
         {

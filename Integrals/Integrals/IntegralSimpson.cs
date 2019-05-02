@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Integrals
 {
-    class IntegralSimpson : Integral
+    public class IntegralSimpson : Integral
     {
         public IntegralSimpson(double startValue, double endValue, int steps, Func<double,double> integrand)
         {
