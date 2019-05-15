@@ -17,5 +17,7 @@ namespace Integrals
         public Func<double, double> Integrand { get; set; }
 
         public abstract double Calculate();
+
+        public abstract double CalculateAsync();
     }
 }

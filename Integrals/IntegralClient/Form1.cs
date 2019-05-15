@@ -31,6 +31,11 @@ namespace IntegralClient
             {
                 List<string> sections = listBox1.Items.Cast<string>().ToList();
                 List<double> times = new List<double>();
+                List<double> parallelTimes = null;
+                if (checkBoxParallelMode.Checked)
+                {
+                    parallelTimes = new List<double>();
+                }
 
                 Method currentMethod = (Method)comboBoxMethods.SelectedIndex;
                 Integral currentIntegral = this.GetInstance(currentMethod);
@@ -38,8 +43,15 @@ namespace IntegralClient
                 currentIntegral.StartValue = int.Parse(textBoxA.Text);
                 currentIntegral.EndValue = int.Parse(textBoxB.Text);
 
-                currentIntegral.Integrand = this.GetIntegrandValue;
-
+                if (checkBoxLambda.Checked)
+                {
+                    currentIntegral.Integrand = (x) => { return 2 * x - Math.Log(2 * x) + 234; };
+                }
+                else
+                {
+                    currentIntegral.Integrand = this.GetIntegrandValue;
+                }
+                
                 double result = 0.0;
                 Stopwatch stopwatch = new Stopwatch();
 
@@ -53,6 +65,16 @@ namespace IntegralClient
                     stopwatch.Stop();
 
                     times.Add(stopwatch.ElapsedMilliseconds / 1000.0);
+
+                    if (checkBoxParallelMode.Checked)
+                    {
+                        stopwatch.Reset();
+                        stopwatch.Start();
+                        currentIntegral.CalculateAsync();
+                        stopwatch.Stop();
+
+                        parallelTimes.Add(stopwatch.ElapsedMilliseconds / 1000.0);
+                    }
                 }
 
                 labelResult.Text = $"Результат: {result.ToString()}";
@@ -68,6 +90,17 @@ namespace IntegralClient
                 for (int i = 0; i < times.Count; i++)
                 {
                     series.Points.AddXY(sections[i], times[i]);
+                }
+
+                if (checkBoxParallelMode.Checked)
+                {
+                    Series parallelSeries = this.chartResult.Series.Add("Параллельный вариант");
+                    parallelSeries.ChartType = SeriesChartType.Line;
+
+                    for (int i = 0; i < parallelTimes.Count; i++)
+                    {
+                        parallelSeries.Points.AddXY(sections[i], parallelTimes[i]);
+                    }
                 }
             }
             else

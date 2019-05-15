@@ -42,5 +42,40 @@ namespace Integrals
             s = (s + d) * h;
             return s;
         }
+
+        public override double CalculateAsync()
+        {
+            if(this.EndValue < this.StartValue)
+            {
+                throw new ArgumentException("Введены неправильные пределы! ");
+            }
+
+            if (this.Steps < 0)
+            {
+                throw new ArgumentException("N не может быть отрицательным! ");
+            }
+
+            double h = (this.EndValue - this.StartValue) / this.Steps;
+            double s = 0;
+            double d = 0;
+            object obj = new object();
+
+            Parallel.For(0, this.Steps, () => 0.0, (i, state, local) => 
+            {
+                local += this.Integrand(this.StartValue + h * i);
+                return local;
+            }, local => 
+            {
+                lock(obj)
+                {
+                    d += local;
+                }
+            });
+
+            s = (this.Integrand(this.StartValue) + this.Integrand(this.EndValue)) / 2;
+            s = (s + d) * h;
+
+            return s;
+        }
     }
 }
